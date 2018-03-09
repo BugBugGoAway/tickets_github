@@ -14,43 +14,54 @@ class DaMaiTicket(object):
     password = ""
     url = "https://piao.damai.cn/143439.html?spm=a2o6e.search.0.0.2bd01e33evOkdz"
     count = 0
+    is_slide = False
 
     def __init__(self):
-        print("Welcome use Tickets...")
+        print("Welcome Use Tickets...")
 
     def login(self):  # 登录
-        self.driver.find_element_by_id('login_email').send_keys(self.username)
-        time.sleep(2)
-        self.driver.find_element_by_id('login_pwd_txt').click()
-        time.sleep(1)
-        self.driver.find_element_by_id('login_pwd').send_keys(self.password)
-        time.sleep(1)
-        self.driver.find_element_by_id("subbtn").click()
-        time.sleep(1)
-        if None is self.driver.get_cookie("damai.cn_email"):
-            print("遇到该死的验证系统了，请按页面提示登陆进去...")
-            time.sleep(1)
-            self.slide()
-            #点击汉字验证码函数
-            # ...
-            # ...
-            # ...
+        try:
+            result1 = WebDriverWait(self.driver, 20, 0.5).until(EC.presence_of_element_located((By.ID, 'login_email')))
+            print("是否能点击输入用户名：" + str(result1))
+            self.driver.find_element_by_id('login_email').send_keys(self.username)
             self.driver.find_element_by_id('login_pwd_txt').click()
-            time.sleep(0.5)
+            result2 = WebDriverWait(self.driver, 20, 0.5).until(EC.visibility_of_element_located((By.ID, 'login_pwd')))
+            print("是否能点击输入密码：" + str(result2))
             self.driver.find_element_by_id('login_pwd').send_keys(self.password)
-        # while True:
-        #     # print(self.driver.get_cookie("damai.cn_email"))
-        #     # allCookies = self.driver.get_cookies()
-        #     # for c in allCookies:
-        #     #     # print(c)
-        #     #     if c == "damai.cn_email":
-        #     #         print("登陆成功！")
-        #     #         return True
-        #
-        #     else:
-        #         return True
+            self.driver.find_element_by_id("subbtn").click()
+            time.sleep(1)
+            while True:
+                if None is self.driver.get_cookie("damai.cn_email"):
+                    print("遇到该死的验证系统了，请按页面提示操作辅助程序登陆进去...")
+                    time.sleep(1)
+                    if self.is_slide is False:
+                        self.slide()
+                    """
+                    点击汉字验证码函数
+                    
+                    """
+                    is_captcha_checked = EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.clickCaptcha_img img'))\
+                        .__call__(self.driver)
+                    if is_captcha_checked is False:
+                        self.driver.find_element_by_id('login_pwd_txt').click()
+                        result2 = WebDriverWait(self.driver, 20, 0.5).until(
+                            EC.visibility_of_element_located((By.ID, 'login_pwd')))
+                        print("是否能点击输入密码：" + str(result2))
+                        self.driver.find_element_by_id('login_pwd').clear()
+                        self.driver.find_element_by_id('login_pwd').send_keys(self.password)
+                        result3 = WebDriverWait(self.driver, 20, 0.5).until(
+                            EC.element_to_be_clickable((By.ID, 'subbtn')))
+                        print("是否能点击登陆：" + str(result3))
+                        self.driver.find_element_by_id("subbtn").click()
+                        time.sleep(2)
+                else:
+                    print("登陆成功!")
+                    return True
+        except Exception as e:
+            print("登陆时产生异常：" + str(e))
 
     def slide(self):
+        print("滑动滑块......")
         slider = self.get_slider()
         track = self.get_track(338)
         ActionChains(self.driver).click_and_hold(slider).perform()
@@ -58,9 +69,10 @@ class DaMaiTicket(object):
             ActionChains(self.driver).move_by_offset(xoffset=x, yoffset=0).perform()
         time.sleep(0.5)
         ActionChains(self.driver).release().perform()
-        check_method = EC.text_to_be_present_in_element((By.CLASS_NAME, 'nc-lang-cnt'), '请按住滑块，拖动到最右边')
-        success = WebDriverWait(self.driver, 20, 0.5).until_not(check_method)
-        print(success)
+        result = WebDriverWait(self.driver, 20, 0.5).until_not(EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, 'span.nc-lang-cnt'), '请按住滑块，拖动到最右边'))
+        self.is_slide = True
+        print("滑动滑块是否成功："+str(self.is_slide))
 
     def get_slider(self):
         # 获取滑块
@@ -85,7 +97,7 @@ class DaMaiTicket(object):
         while current < distance:
             if current < mid:
                 # 加速度为正2
-                a = 2
+                a = 5
             else:
                 # 加速度为负3
                 a = -3
@@ -127,7 +139,7 @@ class DaMaiTicket(object):
                     print("点击了" + availableLis[0])
                     return True
                 else:
-                    print("全TM是灰色的....")
+                    print("全TM是不可点的灰色的....")
                 print("=======================================================================")
             else:
                 print("被定向去其他页面了，正在转回购票页面...")
@@ -142,11 +154,12 @@ class DaMaiTicket(object):
         self.driver = webdriver.Firefox()
         time.sleep(1)
         self.driver.get(self.url)
-        time.sleep(3)
+        # time.sleep(3)
+        login_click = EC.text_to_be_present_in_element((By.LINK_TEXT, '登录'), '登录')
+        result = WebDriverWait(self.driver, 20, 0.5).until(login_click)
+        print("是否能点击【登陆】按钮："+str(result))
         self.driver.find_elements_by_link_text("登录")[0].click()
-        time.sleep(3)
-        isLogin = self.login()
-        if isLogin:
+        if self.login():
             while True:
                 self.loop()
 
