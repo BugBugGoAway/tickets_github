@@ -10,8 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class DaMaiTicket(object):
 
-    username = ""
-    password = ""
+    username = "13701501927"
+    password = "19890605lb"
     url = "https://piao.damai.cn/143439.html?spm=a2o6e.search.0.0.2bd01e33evOkdz"
     count = 0
     is_slide = False
@@ -97,7 +97,7 @@ class DaMaiTicket(object):
         while current < distance:
             if current < mid:
                 # 加速度为正2
-                a = 5
+                a = 15
             else:
                 # 加速度为负3
                 a = -3
