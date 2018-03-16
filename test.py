@@ -15,7 +15,34 @@ def hannuota(n, a , b , c):
         hannuota(n-1, b, a, c)
 
 
- # 使用生成器打印斐波那契数列
+# 递归求2的n次方
+def exponent2(n):
+    if n == 0:
+        return 1
+    else:
+        return exponent2(n - 1) * 2
+
+
+# 递归求1+2+3+4+5+.....+n
+def increment(n):
+    if n == 1:
+        return 1
+    else:
+        return increment(n-1) + n
+
+
+#  用递归的方式检查一个字符串是否事回文字符串
+def is_palindrome(str):
+    if len(str) <= 1:
+        print(True)
+    else:
+        if str[0] == str[-1]:
+            is_palindrome(str[1:-1])
+        else:
+            print(False)
+
+
+# 使用生成器打印斐波那契数列
 def fib(max):
     n, a, b = 0, 0, 1
     while n < max:
@@ -53,15 +80,19 @@ def yanghui_triangles(max):
 
 fb = fib(10)
 
-yh = yanghui_triangles(10)
-
 for f in fb:
     print(f)
+print("\n")
+
+yh = yanghui_triangles(10)
 
 for t in yh:
     print(t)
 
 hannuota(3,"A","B","C")
+print(exponent2(100))
+print(increment(100))
+is_palindrome('noon')
 
 
 
