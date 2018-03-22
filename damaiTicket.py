@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class DaMaiTicket(object):
-
+    #
     username = "13701501927"
     password = "19890605lb"
     url = "https://piao.damai.cn/143439.html?spm=a2o6e.search.0.0.2bd01e33evOkdz"
