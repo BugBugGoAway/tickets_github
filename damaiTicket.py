@@ -162,7 +162,7 @@ class DaMaiTicket(object):
             while True:
                 self.loop()
 
-
+#
 if __name__ == "__main__":
     damai = DaMaiTicket()
     damai.start()
