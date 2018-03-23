@@ -39,7 +39,7 @@ class DaMaiTicket(object):
                     点击汉字验证码函数
                     
                     """
-                    is_captcha_checked = EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.clickCaptcha_img img'))\
+                    is_captcha_checked = EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.clickCaptcha_img img')) \
                         .__call__(self.driver)
                     if is_captcha_checked is False:
                         self.driver.find_element_by_id('login_pwd_txt').click()
@@ -71,7 +71,7 @@ class DaMaiTicket(object):
         result = WebDriverWait(self.driver, 20, 0.5).until_not(EC.text_to_be_present_in_element(
             (By.CSS_SELECTOR, 'span.nc-lang-cnt'), '请按住滑块，拖动到最右边'))
         self.is_slide = True
-        print("滑动滑块是否成功："+str(self.is_slide))
+        print("滑动滑块是否成功：" + str(self.is_slide))
 
     def get_slider(self):
         # 获取滑块
@@ -115,7 +115,7 @@ class DaMaiTicket(object):
 
     def loop(self):  # 循环刷新购票页面
         try:
-            print("=====================页面title："+self.driver.title+"=====================")
+            print("=====================页面title：" + self.driver.title + "=====================")
             if self.driver.current_url == self.url:
                 self.count += 1
                 print("第" + str(self.count) + "次刷新页面")
@@ -130,7 +130,7 @@ class DaMaiTicket(object):
                     # span = a.find_elements_by_tag_name("span")[0]
                     if e.get_attribute('item'):
                         # print("票价：" + span.value)
-                        print("票价："+e.get_attribute("data-pricename"))
+                        print("票价：" + e.get_attribute("data-pricename"))
                         availableLis.append(a)
                 if len(availableLis) > 0:
                     #   选择最低的票价
@@ -145,7 +145,7 @@ class DaMaiTicket(object):
                 self.driver.get(self.url)
                 time.sleep(2)
         except Exception as e:
-            print("循环刷新页面时产生异常："+str(e))
+            print("循环刷新页面时产生异常：" + str(e))
             self.driver.refresh()
             time.sleep(2)
 
@@ -156,17 +156,14 @@ class DaMaiTicket(object):
         # time.sleep(3)
         login_click = EC.text_to_be_present_in_element((By.LINK_TEXT, '登录'), '登录')
         result = WebDriverWait(self.driver, 20, 0.5).until(login_click)
-        print("是否能点击【登陆】按钮："+str(result))
+        print("是否能点击【登陆】按钮：" + str(result))
         self.driver.find_elements_by_link_text("登录")[0].click()
         if self.login():
             while True:
                 self.loop()
 
+
 #
 if __name__ == "__main__":
     damai = DaMaiTicket()
     damai.start()
-
-
-
-
